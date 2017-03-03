@@ -14,6 +14,10 @@ class Blade: SKSpriteNode, GameSprite {
                                          size: initialSize)
         self.physicsBody?.affectedByGravity = false
         self.physicsBody?.isDynamic = false
+        
+        self.physicsBody?.categoryBitMask = PhysicsCategory.enemy.rawValue
+        self.physicsBody?.collisionBitMask = ~PhysicsCategory.damagedPenguin.rawValue
+        
         createAnimations()
         self.run(spinAnimation)
     }

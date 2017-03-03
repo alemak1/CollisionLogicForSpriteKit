@@ -15,6 +15,9 @@ class Star: SKSpriteNode, GameSprite {
         self.physicsBody = SKPhysicsBody(circleOfRadius:
             size.width / 2)
         self.physicsBody?.affectedByGravity = false
+        
+        self.physicsBody?.categoryBitMask = PhysicsCategory.powerup.rawValue
+        
         // Create our star animation and start it:
         createAnimations()
         self.run(pulseAnimation)

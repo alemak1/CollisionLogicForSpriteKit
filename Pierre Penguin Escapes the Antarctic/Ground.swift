@@ -15,9 +15,22 @@ class Ground: SKSpriteNode, GameSprite {
     var jumpCount = CGFloat(1)
 
     
+    init() {
+        super.init(texture: nil, color: .clear,
+                   size: CGSize.zero)
+        
+    }
+
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // This function tiles the ground texture across the width
     // of the Ground node. We will call it from our GameScene.
     func createChildren() {
+
+        
         // This is one of those unique situations where we use a
         // non-default anchor point. By positioning the ground by
         // its top left corner, we can place it just slightly
@@ -53,6 +66,9 @@ class Ground: SKSpriteNode, GameSprite {
         let pointTopRight = CGPoint(x: size.width, y: 0)
         self.physicsBody = SKPhysicsBody(edgeFrom: pointTopLeft,
                                          to: pointTopRight)
+        
+        self.physicsBody?.categoryBitMask = PhysicsCategory.ground.rawValue
+
         
         // Save the width of one-third of the children nodes
         jumpWidth = tileSize.width * floor(tileCount / 3)

@@ -1,6 +1,6 @@
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     let cam = SKCameraNode()
     let ground = Ground()
     let player = Player()
@@ -43,7 +43,42 @@ class GameScene: SKScene {
         // Place the star out of the way for now
         self.addChild(powerUpStar)
         powerUpStar.position = CGPoint(x: -2000, y: -2000)
+        
+        self.physicsWorld.contactDelegate = self
     }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        //implement collision and contact logic here
+        
+        let otherBody: SKPhysicsBody
+        let penguinMask = PhysicsCategory.penguin.rawValue | PhysicsCategory.damagedPenguin.rawValue
+        
+            if(contact.bodyA.categoryBitMask & penguinMask > 0){
+                otherBody = contact.bodyB
+            } else {
+                otherBody = contact.bodyA
+            
+            }
+        
+        switch(otherBody.categoryBitMask){
+        case PhysicsCategory.ground.rawValue:
+            print("Hit ground")
+            break
+        case PhysicsCategory.enemy.rawValue:
+            print("Take damage")
+            break
+        case PhysicsCategory.coin.rawValue:
+            print("Collect a coin")
+            break
+        case PhysicsCategory.powerup.rawValue:
+            print("Start the powerup")
+            break
+        default:
+            print("Contact with no game logic")
+        }
+        
+    }
+    
     
     override func didSimulatePhysics() {
         // Keep track of how far the player has flown
