@@ -1,6 +1,13 @@
 import SpriteKit
 
 class Player : SKSpriteNode, GameSprite {
+    var health: Int = 3
+    var invulnerable = false
+    var damaged = false
+    var damageAnimation = SKAction()
+    var dieAnimation = SKAction()
+    var forwardVelocity: CGFloat = 200
+    
     var initialSize = CGSize(width: 64, height: 64)
     var textureAtlas:SKTextureAtlas =
         SKTextureAtlas(named:"Pierre")
@@ -109,11 +116,13 @@ class Player : SKSpriteNode, GameSprite {
         }
         
         // Set a constant velocity to the right:
-        self.physicsBody?.velocity.dx = 200
+        self.physicsBody?.velocity.dx = self.forwardVelocity
     }
     
     // Begin the flap animation, set flapping to true:
     func startFlapping() {
+        if(self.health <= 0){ return }
+        
         self.removeAction(forKey: "soarAnimation")
         self.run(flyAnimation, withKey: "flapAnimation")
         self.flapping = true
@@ -121,9 +130,33 @@ class Player : SKSpriteNode, GameSprite {
     
     // Stop the flap animation, set flapping to false:
     func stopFlapping() {
+        if(self.health <= 0){return}
         self.removeAction(forKey: "flapAnimation")
         self.run(soarAnimation, withKey: "soarAnimation")
         self.flapping = false
+    }
+    
+    func die(){
+        self.alpha = 1
+        self.removeAllActions()
+        self.run(dieAnimation)
+        self.flapping = false
+        self.forwardVelocity = 0
+        
+    
+    }
+    
+    func takeDamage(){
+        if(self.damaged || self.invulnerable) { return }
+        
+        self.health -= 1
+        
+        if(self.health == 0){
+            die()
+        } else {
+            self.run(self.damageAnimation)
+        }
+    
     }
     
     func onTap() {}
