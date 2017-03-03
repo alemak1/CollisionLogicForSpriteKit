@@ -86,6 +86,40 @@ class Player : SKSpriteNode, GameSprite {
             SKAction.repeatForever(soarAction),
             rotateDownAction
             ])
+        
+        let damageStart = SKAction.run({
+            self.physicsBody?.categoryBitMask = PhysicsCategory.damagedPenguin.rawValue
+            self.physicsBody?.collisionBitMask = ~PhysicsCategory.enemy.rawValue
+        })
+        
+        let slowFade = SKAction.sequence([
+            SKAction.fadeAlpha(to: 0.7, duration: 0.35),
+            SKAction.fadeAlpha(to: 0.3, duration: 0.35)
+            ])
+        
+        
+        let fastFade = SKAction.sequence([
+            SKAction.fadeAlpha(to: 0.7, duration: 0.2),
+            SKAction.fadeAlpha(to: 0.3, duration: 0.2)
+            ])
+        
+        let fadeInAndOut = SKAction.sequence([
+            SKAction.repeat(slowFade, count: 5),
+            SKAction.repeat(fastFade, count: 2),
+            SKAction.fadeAlpha(to: 1, duration: 0.15)
+            ])
+        
+        let damageEnd = SKAction.run({
+            self.physicsBody?.categoryBitMask = PhysicsCategory.penguin.rawValue
+            self.physicsBody?.collisionBitMask = 0xFFFFFFFF
+            self.damaged = false
+        })
+        
+        self.damageAnimation = SKAction.sequence([
+            damageStart,
+            fadeInAndOut,
+            damageEnd
+            ])
     }
     
     func update() {
@@ -148,6 +182,8 @@ class Player : SKSpriteNode, GameSprite {
     
     func takeDamage(){
         if(self.damaged || self.invulnerable) { return }
+        
+        self.damaged = true
         
         self.health -= 1
         
