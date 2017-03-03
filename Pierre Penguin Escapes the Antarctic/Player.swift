@@ -120,6 +120,26 @@ class Player : SKSpriteNode, GameSprite {
             fadeInAndOut,
             damageEnd
             ])
+        
+        let startDie = SKAction.run({
+            self.texture = self.textureAtlas.textureNamed("pierre-dead.png")
+            self.physicsBody?.affectedByGravity = false
+            self.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            self.physicsBody?.collisionBitMask = PhysicsCategory.ground.rawValue
+        })
+        
+        let endDie = SKAction.run({
+            self.physicsBody?.affectedByGravity = true
+        })
+        
+        self.dieAnimation = SKAction.sequence([
+                startDie,
+                SKAction.scale(to: 1.3, duration: 0.5),
+                SKAction.wait(forDuration: 0.5),
+                SKAction.rotate(toAngle: 3, duration: 1.5),
+                SKAction.wait(forDuration: 0.5),
+                endDie
+            ])
     }
     
     func update() {
